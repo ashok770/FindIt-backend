@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const lostItemRoutes = require("./routes/lostItemRoutes");
 const foundItemRoutes = require("./routes/foundItemRoutes");
+const matchRoutes = require("./routes/matchRoutes");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(express.json()); // 🔥 VERY IMPORTANT
 app.use("/api/auth", authRoutes);
 app.use("/api/lost", lostItemRoutes);
 app.use("/api/found", foundItemRoutes);
+app.use("/api/match", matchRoutes);
 
 // TEST ROUTE
 app.get("/", (req, res) => {

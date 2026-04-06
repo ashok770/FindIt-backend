@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const lostItemRoutes = require("./routes/lostItemRoutes");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json()); // 🔥 VERY IMPORTANT
 
 // ROUTES
 app.use("/api/auth", authRoutes);
+app.use("/api/lost", lostItemRoutes);
 
 // TEST ROUTE
 app.get("/", (req, res) => {

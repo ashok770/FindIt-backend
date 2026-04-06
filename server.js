@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const lostItemRoutes = require("./routes/lostItemRoutes");
 const foundItemRoutes = require("./routes/foundItemRoutes");
 const matchRoutes = require("./routes/matchRoutes");
+const claimRoutes = require("./routes/claimRoutes");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/lost", lostItemRoutes);
 app.use("/api/found", foundItemRoutes);
 app.use("/api/match", matchRoutes);
+app.use("/api/claim", claimRoutes);
 
 // TEST ROUTE
 app.get("/", (req, res) => {

@@ -28,43 +28,51 @@ const locationMatch = (a, b) => {
 
 exports.getMatches = async (req, res) => {
   try {
-    const { lostItemId } = req.params;
+    // Get all lost items for the authenticated user
+    const userId = req.user.id;
+    const lostItems = await LostItem.find({ userId });
 
-    const lostItem = await LostItem.findById(lostItemId);
-    if (!lostItem) {
-      return res.status(404).json({ msg: "Lost item not found" });
+    if (!lostItems || lostItems.length === 0) {
+      return res.json([]);
     }
 
     const foundItems = await FoundItem.find();
+    const allMatches = [];
 
-    const results = foundItems.map((item) => {
-      let score = 0;
+    // For each lost item, calculate matches
+    lostItems.forEach((lostItem) => {
+      const results = foundItems.map((item) => {
+        let score = 0;
 
-      // NAME → 30%
-      score += textMatch(lostItem.itemName, item.itemName) * 30;
+        // NAME → 30%
+        score += textMatch(lostItem.itemName, item.itemName) * 30;
 
-      // COLOR → 20%
-      score += textMatch(lostItem.color, item.color) * 20;
+        // COLOR → 20%
+        score += textMatch(lostItem.color, item.color) * 20;
 
-      // LOCATION → 20%
-      score += locationMatch(lostItem.locationLost, item.locationFound) * 20;
+        // LOCATION → 20%
+        score += locationMatch(lostItem.locationLost, item.locationFound) * 20;
 
-      // DATE → 10%
-      score += dateMatch(lostItem.dateLost, item.dateFound) * 10;
+        // DATE → 10%
+        score += dateMatch(lostItem.dateLost, item.dateFound) * 10;
 
-      // DESCRIPTION → 20%
-      score += textMatch(lostItem.description, item.description) * 20;
+        // DESCRIPTION → 20%
+        score += textMatch(lostItem.description, item.description) * 20;
 
-      return {
-        foundItem: item,
-        matchScore: score,
-      };
+        return {
+          lostItem: lostItem,
+          foundItem: item,
+          matchScore: score,
+        };
+      });
+
+      allMatches.push(...results);
     });
 
-    // SORT DESCENDING
-    results.sort((a, b) => b.matchScore - a.matchScore);
+    // SORT DESCENDING BY SCORE
+    allMatches.sort((a, b) => b.matchScore - a.matchScore);
 
-    res.json(results);
+    res.json(allMatches);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

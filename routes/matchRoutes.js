@@ -4,6 +4,6 @@ const router = express.Router();
 const { getMatches } = require("../controllers/matchController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-router.get("/:lostItemId", authMiddleware, getMatches);
+router.get("/", authMiddleware, getMatches);
 
 module.exports = router;
